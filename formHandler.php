@@ -5,6 +5,10 @@ session_start();
 
 include_once('functions.php');
 
+$host = $_SERVER['HTTP_HOST'];
+$uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+$extra = 'index.php';
+
 if ($_POST['submit_btn']) {
     $name = trim($_POST['user_name']);
     $email = trim($_POST['user_email']);
@@ -17,31 +21,36 @@ if ($_POST['submit_btn']) {
     $regExEmail = '/[-0-9a-z_\.]+@[-0-9a-z^\.]+\.[a-z]{2,}/i';
     $regExPhone ='/^((\+7|7|8)+([0-9]){10})$/';
 
-    $ValidName = Validation($regExName, $name);
-    $ValidEmail = Validation($regExEmail, $email);
-    $ValidPhone = Validation($regExPhone, $phone);
+    $validName = validation($regExName, $name);
+    $validEmail = validation($regExEmail, $email);
+    $validPhone = validation($regExPhone, $phone);
+    $_SESSION['validation'] = validationAllRes($validName, $validEmail, $validPhone);
+    
 
-    if (!$ValidName
-        && !$ValidEmail
-        && !$ValidPhone
-    ) {
+    if ($_SESSION['validation']) {
         $_SESSION['name'] = $name;
         $_SESSION['email'] = $email;
         $_SESSION['phone'] = $phone;
         $_SESSION['date'] = $date;
         $_SESSION['text'] = $text;
 
-        $message = $name . DaysBeforeBirhday($date);
+        $message = $name . getMessage($date);
 
-        $_SESSION['massage'] = $message;
+        $_SESSION['message'] = $message;
         
-        header('Location: index.php');
+        header("Location: http://$host$uri/$extra");
+        exit;
     }
 }
 
 if ($_POST['exit_btn']) {
     $_SESSION = [];
+
     unset($_COOKIE[session_name()]);
+
     session_destroy();
-    header('Location: index.php');
+
+    header("Location: http://$host$uri/$extra");
+    
+    exit;
 }

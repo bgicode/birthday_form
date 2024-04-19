@@ -1,9 +1,9 @@
 <?php
 
-function Validation(string $regEx, string $field): mixed
+function validation(string $regEx, string $field): string
 {
     if (preg_match($regEx, $field)) {
-        $message = false;
+        $message = '';
     } else {
         $message = 'неверно введено';
     }
@@ -11,7 +11,16 @@ function Validation(string $regEx, string $field): mixed
     return $message;
 }
 
-function AutoComplite(mixed $field): string
+function validationAllRes(string $value1, string $value2, string $value3): bool
+{
+    if (empty($value1) && empty($value2) && empty($value3)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function autoComplete(mixed $field): string
 {
     if ($field) {
         return $field;
@@ -20,20 +29,20 @@ function AutoComplite(mixed $field): string
     }
 }
 
-function AutoCompliteVar(mixed $param = NULL, mixed $error = '', mixed $success = ''): string
+function autoCompleteVar(mixed $param, mixed $error = '', mixed $success = ''): string
 {
-    if (is_string($param)) {
-        return AutoComplite($error);
-    } elseif (!$param) {
-        return AutoComplite($success);
+    if (!$param) {
+        return autoComplete($error);
+    } elseif ($param) {
+        return autoComplete($success);
     } else {
         return '';
     }
 }
 
-function DaysBeforeBirhday(string $date): string
+function getMessage(string $date): string
 {
-    $birhday = date('d.m' ,strtotime($date));
+    $birhday = date('d.m', strtotime($date));
 
     if ($birhday == date('d.m')) {
         $message = ", Поздравляем с Днём Рождения!";
